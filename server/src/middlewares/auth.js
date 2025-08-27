@@ -9,7 +9,7 @@ export const auth=(req,res,next)=>{
   try {
     const payload=jwt.verify(toekn, process.env.JWT_SECRET);
     req.user={id:payload.id, email:payload.email};
-    next()
+    next();
   } catch (error) {
     console.error(error.message);
     return res.status(401).json({message:"Invalid or expires token"});

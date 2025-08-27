@@ -16,4 +16,4 @@ const folderSchema=new Schema({
 
 folderSchema.index({name:1, owner:1, parent:1},{unique:true});
 
-export default mongoose.model("Folde", folderSchema)
+export default mongoose.model("Folde", folderSchema);
