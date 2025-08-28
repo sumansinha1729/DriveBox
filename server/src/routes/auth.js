@@ -24,12 +24,10 @@ router.post("/signup", async (req, res) => {
     }
     const user = await User.create({ name, email, password });
     const token = sign(user);
-    return res
-      .status(201)
-      .json({
-        token,
-        user: { id: user._id, name: user.name, email: user.email },
-      });
+    return res.status(201).json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
   } catch (error) {
     if (error?.code === 11000)
       return res.status(409).json({ message: "Email already registered" });

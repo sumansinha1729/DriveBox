@@ -1,4 +1,3 @@
-// client/src/context/AuthContext.jsx
 import { createContext, useContext, useMemo, useState, useEffect } from "react";
 import api from "../api.js";
 
@@ -17,51 +16,31 @@ export default function AuthProvider({ children }) {
     () => localStorage.getItem("token") || null
   );
 
-  // Ensure axios sends Authorization header after refresh/page load
   useEffect(() => {
-    if (token) {
-      api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    } else {
-      delete api.defaults.headers.common.Authorization;
-    }
+    if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    else delete api.defaults.headers.common.Authorization;
   }, [token]);
 
   const login = async (email, password) => {
-    try {
-      const { data } = await api.post("/api/auth/login", { email, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setToken(data.token);
-      setUser(data.user);
-      return data.user;
-    } catch (e) {
-      const msg = e?.response?.data?.message || "Login failed";
-      const status = e?.response?.status;
-      const err = new Error(msg);
-      err.status = status;
-      throw err;
-    }
+    const { data } = await api.post("/api/auth/login", { email, password });
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    setToken(data.token);
+    setUser(data.user);
+    return data.user;
   };
 
   const signup = async (name, email, password) => {
-    try {
-      const { data } = await api.post("/api/auth/signup", {
-        name,
-        email,
-        password,
-      });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setToken(data.token);
-      setUser(data.user);
-      return data.user;
-    } catch (e) {
-      const msg = e?.response?.data?.message || "Signup failed";
-      const status = e?.response?.status;
-      const err = new Error(msg);
-      err.status = status;
-      throw err;
-    }
+    const { data } = await api.post("/api/auth/signup", {
+      name,
+      email,
+      password,
+    });
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    setToken(data.token);
+    setUser(data.user);
+    return data.user;
   };
 
   const logout = () => {
@@ -70,21 +49,6 @@ export default function AuthProvider({ children }) {
     setToken(null);
     setUser(null);
   };
-
-  // Optional: global 401 handler -> auto logout
-  useEffect(() => {
-    const id = api.interceptors.response.use(
-      (res) => res,
-      (error) => {
-        if (error?.response?.status === 401) {
-          // token missing/expired/invalid
-          logout();
-        }
-        return Promise.reject(error);
-      }
-    );
-    return () => api.interceptors.response.eject(id);
-  }, []);
 
   const value = useMemo(
     () => ({

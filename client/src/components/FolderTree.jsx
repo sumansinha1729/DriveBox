@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from "../api.js";
 
 function Node({ folder, loadChildren, onOpen }) {
   const [kids, setKids] = useState([]);
@@ -16,7 +16,9 @@ function Node({ folder, loadChildren, onOpen }) {
   return (
     <div className="node">
       <div className="node-row">
-        <button onClick={toggle}>{open ? "▾" : "▸"}</button>
+        <button onClick={toggle} aria-label="toggle">
+          {open ? "▾" : "▸"}
+        </button>
         <span className="link" onClick={() => onOpen(folder._id)}>
           {folder.name}
         </span>
@@ -47,6 +49,7 @@ export default function FolderTree({ onOpen }) {
 
   useEffect(() => {
     loadChildren(null).then(setRoots);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

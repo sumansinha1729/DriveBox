@@ -1,4 +1,3 @@
-// server/src/routes/folders.js
 import express from "express";
 import Folder from "../models/Folder.js";
 import { auth } from "../middlewares/auth.js";

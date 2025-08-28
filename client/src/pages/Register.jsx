@@ -17,19 +17,13 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
-    // simple validation
     const n = name.trim();
     const em = email.trim();
     const pw = password;
 
-    if (!n || !em || !pw) {
-      setError("All fields are required.");
-      return;
-    }
-    if (pw.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
+    if (!n || !em || !pw) return setError("All fields are required.");
+    if (pw.length < 6)
+      return setError("Password must be at least 6 characters.");
 
     try {
       setBusy(true);

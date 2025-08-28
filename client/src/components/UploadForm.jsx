@@ -12,12 +12,17 @@ export default function UploadForm({ folderId, onUploaded }) {
     if (!file || !name) return setError("Name and image are required");
     setError("");
     setBusy(true);
-    const fd = new FormData();
-    fd.append("name", name);
-    if (folderId) fd.append("folderId", folderId);
-    fd.append("image", file);
+
     try {
-      await api.post("/api/images/upload", fd);
+      const fd = new FormData();
+      fd.append("name", name.trim());
+      if (folderId) fd.append("folderId", folderId);
+      fd.append("image", file);
+
+      await api.post("/api/images/upload", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       setName("");
       setFile(null);
       onUploaded?.();
@@ -38,9 +43,11 @@ export default function UploadForm({ folderId, onUploaded }) {
       <input
         type="file"
         accept="image/*"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
       />
-      <button disabled={busy}>{busy ? "Uploading…" : "Upload"}</button>
+      <button disabled={busy || !file || !name.trim()}>
+        {busy ? "Uploading…" : "Upload"}
+      </button>
       {error && <div className="error">{error}</div>}
     </form>
   );

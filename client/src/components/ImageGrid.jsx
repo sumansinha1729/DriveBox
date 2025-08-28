@@ -1,5 +1,5 @@
 export default function ImageGrid({ images }) {
-  if (!images.length) return <div className="muted">No images here yet.</div>;
+  if (!images?.length) return <div className="muted">No images here yet.</div>;
   return (
     <div className="grid">
       {images.map((img) => (

@@ -18,7 +18,6 @@ function PrivateRoute({ children }) {
 
 function Layout() {
   const { user, logout } = useAuth();
-
   return (
     <div>
       <header style={styles.header}>
@@ -45,7 +44,6 @@ function Layout() {
           )}
         </nav>
       </header>
-
       <main style={{ padding: 16 }}>
         <Outlet />
       </main>

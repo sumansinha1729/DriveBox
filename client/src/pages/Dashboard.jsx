@@ -4,7 +4,7 @@ import api from "../api.js";
 import FolderTree from "../components/FolderTree.jsx";
 import UploadForm from "../components/UploadForm.jsx";
 import ImageGrid from "../components/ImageGrid.jsx";
-import Breadcrumbs from "../components/BreadCrumbs.jsx";
+import Breadcrumbs from "../components/Breadcrumbs.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 
 export default function Dashboard() {
@@ -14,26 +14,33 @@ export default function Dashboard() {
   const [folders, setFolders] = useState([]);
   const [images, setImages] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const load = async (folderId = null) => {
+  const load = async (folderId = null, opts = { keepQuery: false }) => {
+    setLoading(true);
     setCurrentFolder(folderId);
-    const [fRes, iRes] = await Promise.all([
-      api.get("/api/folders", { params: { parentId: folderId } }),
-      api.get("/api/images", { params: { folderId } }),
-    ]);
-    setFolders(fRes.data);
-    setImages(iRes.data);
+    try {
+      const [fRes, iRes] = await Promise.all([
+        api.get("/api/folders", { params: { parentId: folderId } }),
+        api.get("/api/images", { params: { folderId } }),
+      ]);
+      setFolders(fRes.data);
+      setImages(iRes.data);
 
-    if (folderId) {
-      const { data } = await api.get(`/api/folders/path/${folderId}`);
-      setPath(data);
-    } else {
-      setPath([]);
+      if (folderId) {
+        const { data } = await api.get(`/api/folders/path/${folderId}`);
+        setPath(data);
+      } else {
+        setPath([]);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     load(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const createFolder = async () => {
@@ -71,6 +78,7 @@ export default function Dashboard() {
         />
 
         <div className="toolbar">
+          <SearchBar onSearch={onSearch} />
           <div className="new-folder">
             <input
               placeholder="New folder name"
@@ -79,7 +87,6 @@ export default function Dashboard() {
             />
             <button onClick={createFolder}>Create</button>
           </div>
-          <SearchBar onSearch={onSearch} />
         </div>
 
         <UploadForm
@@ -87,28 +94,34 @@ export default function Dashboard() {
           onUploaded={() => load(currentFolder)}
         />
 
-        <section>
-          <h3>Folders</h3>
-          <div className="folders">
-            {folders.length === 0 && (
-              <div className="muted">No folders here.</div>
-            )}
-            {folders.map((f) => (
-              <div
-                key={f._id}
-                className="folder link"
-                onClick={() => load(f._id)}
-              >
-                📁 {f.name}
+        {loading ? (
+          <div className="muted">Loading…</div>
+        ) : (
+          <>
+            <section>
+              <h3>Folders</h3>
+              <div className="folders">
+                {folders.length === 0 && (
+                  <div className="muted">No folders here.</div>
+                )}
+                {folders.map((f) => (
+                  <div
+                    key={f._id}
+                    className="folder link"
+                    onClick={() => load(f._id)}
+                  >
+                    📁 {f.name}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
 
-        <section>
-          <h3>Images</h3>
-          <ImageGrid images={images} />
-        </section>
+            <section>
+              <h3>Images</h3>
+              <ImageGrid images={images} />
+            </section>
+          </>
+        )}
       </main>
     </div>
   );
