@@ -17,7 +17,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/folders", folderRoutes);
 app.use("/api/images", imageRoutes);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 connectDB(process.env.MONGODB_URI).then(() => {
   if (!process.env.JWT_SECRET) {
     console.error("FATAL: JWT_SECRET missing (server/.env).");
