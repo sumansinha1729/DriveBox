@@ -4,7 +4,7 @@ import api from "../api.js";
 import FolderTree from "../components/FolderTree.jsx";
 import UploadForm from "../components/UploadForm.jsx";
 import ImageGrid from "../components/ImageGrid.jsx";
-import Breadcrumbs from "../components/Breadcrumbs.jsx";
+import Breadcrumbs from "../components/BreadCrumbs.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 
 export default function Dashboard() {

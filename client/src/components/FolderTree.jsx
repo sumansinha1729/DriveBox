@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from "../api.js";
 
 function Node({ folder, loadChildren, onOpen }) {
   const [kids, setKids] = useState([]);
